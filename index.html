@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Asistente Técnico — Llana</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:        #1b3d6f;
+      --navy-dark:   #122a4e;
+      --navy-deep:   #0d1f3c;
+      --navy-light:  #e8eef7;
+      --navy-mid:    #2d5a9e;
+      --accent:      #4a7fd4;
+      --accent-soft: #dce8f7;
+      --bg:          #f2f5f9;
+      --surface:     #ffffff;
+      --border:      #d8e2ef;
+      --text:        #0f1e35;
+      --muted:       #5a7292;
+      --bubble-ai:   #ffffff;
+      --bubble-user: #1b3d6f;
+      --radius:      14px;
+      --font:        'Outfit', sans-serif;
+      --mono:        'DM Mono', monospace;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 0 28px;
+      height: 64px;
+      background: var(--navy-deep);
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::after {
+      content: '';
+      position: absolute;
+      right: -30px;
+      top: -50px;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.03);
+      pointer-events: none;
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .logo-icon {
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 0 10px;
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+      letter-spacing: -0.02em;
+      flex-shrink: 0;
+    }
+
+    .header-text h1 {
+      font-size: 15px;
+      font-weight: 600;
+      color: white;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+
+    .header-text p {
+      font-size: 11px;
+      color: rgba(255,255,255,0.45);
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .status-badge {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px;
+      padding: 4px 11px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.65);
+      font-weight: 500;
+    }
+
+    .status-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4ade80;
+      flex-shrink: 0;
+      box-shadow: 0 0 6px #4ade80;
+    }
+
+    .header-divider {
+      height: 3px;
+      background: linear-gradient(90deg, var(--navy-mid), var(--accent), transparent);
+      flex-shrink: 0;
+    }
+
+    /* ── Messages ── */
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 28px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      scroll-behavior: smooth;
+    }
+
+    .messages::-webkit-scrollbar { width: 4px; }
+    .messages::-webkit-scrollbar-track { background: transparent; }
+    .messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    /* ── Welcome ── */
+    .welcome {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      flex: 1;
+      padding: 40px 28px;
+      gap: 20px;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .welcome h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      line-height: 1.25;
+    }
+
+    .welcome h2 span { color: var(--navy); }
+
+    .welcome-divider {
+      width: 36px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--navy), var(--accent));
+      border-radius: 2px;
+    }
+
+    .welcome p {
+      font-size: 14px;
+      color: var(--muted);
+      max-width: 380px;
+      line-height: 1.65;
+    }
+
+    .suggestions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .suggestion {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 16px;
+      font-size: 13px;
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      font-family: var(--font);
+      font-weight: 400;
+      transition: border-color 0.15s, background 0.15s, transform 0.12s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .suggestion::before {
+      content: '→';
+      color: var(--navy);
+      font-size: 14px;
+      flex-shrink: 0;
+      opacity: 0.5;
+      transition: opacity 0.15s, transform 0.15s;
+    }
+
+    .suggestion:hover {
+      border-color: var(--navy);
+      background: var(--navy-light);
+      transform: translateX(3px);
+    }
+
+    .suggestion:hover::before { opacity: 1; transform: translateX(2px); }
+
+    /* ── Message rows ── */
+    .msg-row {
+      display: flex;
+      gap: 12px;
+      animation: fadeUp 0.25s ease both;
+    }
+
+    .msg-row.user { flex-direction: row-reverse; }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .avatar.ai { background: var(--navy-deep); color: white; font-size: 10px; font-weight: 700; letter-spacing: 0.03em; }
+    .avatar.user { background: #1a1a2e; color: white; font-size: 11px; }
+
+    .bubble {
+      max-width: 76%;
+      padding: 13px 17px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .msg-row.ai .bubble {
+      background: var(--bubble-ai);
+      border: 1.5px solid var(--border);
+      border-bottom-left-radius: 4px;
+      color: var(--text);
+      box-shadow: 0 1px 4px rgba(27,61,111,0.06);
+    }
+
+    .msg-row.user .bubble {
+      background: var(--bubble-user);
+      border-bottom-right-radius: 4px;
+      color: white;
+      box-shadow: 0 2px 12px rgba(27,61,111,0.22);
+    }
+
+    .bubble strong { font-weight: 600; }
+    .bubble ul, .bubble ol { padding-left: 18px; margin: 6px 0; }
+    .bubble li { margin: 4px 0; }
+    .bubble p + p { margin-top: 8px; }
+
+    /* ── Copy btn ── */
+    .bubble-footer { display: flex; justify-content: flex-end; margin-top: 8px; }
+
+    .copy-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 3px 7px;
+      border-radius: 5px;
+      color: var(--muted);
+      font-size: 11px;
+      font-family: var(--font);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: color 0.15s, background 0.15s;
+      font-weight: 500;
+    }
+
+    .copy-btn:hover { color: var(--navy); background: var(--navy-light); }
+    .copy-btn.copied { color: #16a34a; }
+
+    .copy-btn svg {
+      width: 12px; height: 12px;
+      stroke: currentColor; fill: none;
+      stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    /* ── Typing ── */
+    .typing-row { display: flex; gap: 12px; animation: fadeUp 0.2s ease both; }
+
+    .typing-bubble {
+      background: var(--bubble-ai);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      border-bottom-left-radius: 4px;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--navy-mid);
+      animation: bounce 1.2s infinite ease-in-out;
+      opacity: 0.5;
+    }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-5px); opacity: 1; }
+    }
+
+    /* ── Input ── */
+    .input-area {
+      padding: 14px 28px 20px;
+      border-top: 1.5px solid var(--border);
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+
+    .input-wrap {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .input-wrap:focus-within {
+      border-color: var(--navy);
+      box-shadow: 0 0 0 3px rgba(27,61,111,0.08);
+    }
+
+    textarea {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-family: var(--font);
+      font-size: 14px;
+      color: var(--text);
+      resize: none;
+      outline: none;
+      line-height: 1.5;
+      max-height: 120px;
+      min-height: 22px;
+    }
+
+    textarea::placeholder { color: var(--muted); }
+
+    .send-btn {
+      width: 36px; height: 36px;
+      border-radius: 9px;
+      background: var(--navy);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+      box-shadow: 0 2px 8px rgba(27,61,111,0.28);
+    }
+
+    .send-btn:hover { background: var(--navy-dark); box-shadow: 0 4px 14px rgba(27,61,111,0.38); }
+    .send-btn:active { transform: scale(0.94); }
+    .send-btn:disabled { background: var(--border); cursor: not-allowed; box-shadow: none; }
+
+    .send-btn svg {
+      width: 16px; height: 16px;
+      stroke: white; fill: none;
+      stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    /* ── Products bar ── */
+    .products-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 28px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .products-bar::-webkit-scrollbar { display: none; }
+
+    .products-label {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+      flex-shrink: 0;
+      letter-spacing: 0.02em;
+    }
+
+    .product-chip {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-family: var(--font);
+      font-weight: 500;
+      color: var(--navy);
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    .product-chip:hover {
+      background: var(--navy-light);
+      border-color: var(--navy);
+    }
+
+    /* ── Input meta ── */
+    .input-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+
+    .input-hint {
+      font-size: 11px;
+      color: var(--muted);
+      opacity: 0.7;
+    }
+
+    .char-counter {
+      font-size: 11px;
+      color: var(--muted);
+      opacity: 0;
+      transition: opacity 0.2s;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .char-counter.visible { opacity: 0.6; }
+    .char-counter.warning { color: #e67e22; opacity: 1; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Header actions ── */
+    .header-actions {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .new-chat-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+
+    .new-chat-btn:hover { background: rgba(255,255,255,0.2); }
+
+    .new-chat-btn svg {
+      width: 14px;
+      height: 14px;
+      stroke: white;
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+    }
+
+    /* ── Timestamp ── */
+    .msg-time {
+      font-size: 10px;
+      color: var(--muted);
+      opacity: 0.6;
+      margin-top: 4px;
+      padding: 0 2px;
+    }
+
+    .msg-row.user .msg-time { text-align: right; }
+    .msg-row.ai .msg-time { text-align: left; padding-left: 44px; }
+
+    /* ── Scroll to bottom ── */
+    .scroll-btn {
+      position: absolute;
+      bottom: 100px;
+      right: 28px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--navy);
+      border: none;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(27,61,111,0.3);
+      transition: opacity 0.2s, transform 0.2s;
+      z-index: 10;
+    }
+
+    .scroll-btn.visible { display: flex; }
+    .scroll-btn:hover { transform: translateY(-2px); }
+
+    .scroll-btn svg {
+      width: 16px;
+      height: 16px;
+      stroke: white;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* ── Empty state ── */
+    .welcome-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--navy-light);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 11px;
+      color: var(--navy);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .welcome-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--navy);
+      opacity: 0.5;
+    }
+
+    @media (max-width: 600px) {
+      .app { border: none; }
+      .messages { padding: 18px 18px 10px; }
+      .input-area { padding: 12px 18px 18px; }
+      header { padding: 0 18px; }
+      .bubble { max-width: 86%; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div class="logo-wrap">
+      <div class="logo-icon">LN</div>
+      <div class="header-text">
+        <h1>Asistente Técnico</h1>
+        <p>Llana</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="new-chat-btn" onclick="resetChat()" title="Nueva conversación">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+      <div class="status-badge">En línea</div>
+    </div>
+  </header>
+
+  <div class="header-divider"></div>
+
+  <!-- Productos rápidos -->
+  <div class="products-bar">
+    <span class="products-label">Productos:</span>
+    <button class="product-chip" onclick="setProduct('Juncta Epox RG-2')">Juncta Epox RG-2</button>
+    <button class="product-chip" onclick="setProduct('Juncta Mineral CG2-WA')">Juncta Mineral CG2-WA</button>
+    <button class="product-chip" onclick="setProduct('Tixar Flex Duo S2')">Tixar Flex Duo S2</button>
+    <button class="product-chip" onclick="setProduct('Tixar Gel Mono S1')">Tixar Gel Mono S1</button>
+    <button class="product-chip" onclick="setProduct('Cobertec Vial Ligero')">Cobertec Vial Ligero</button>
+    <button class="product-chip" onclick="setProduct('Cobertec Pool')">Cobertec Pool</button>
+  </div>
+
+  <button class="scroll-btn" id="scrollBtn" onclick="scrollBottom()">
+    <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+
+  <div class="messages" id="messages">
+    <div class="welcome" id="welcome">
+      <div class="welcome-badge">Asistente Técnico IA</div>
+      <h2>¿En qué puedo <span>ayudarte hoy?</span></h2>
+      <div class="welcome-divider"></div>
+      <p>Consulta dudas técnicas sobre aplicación y uso de productos Llana. Respondo con información precisa basada en documentación técnica.</p>
+      <div class="suggestions">
+        <button class="suggestion" onclick="useSuggestion(this)">¿Qué mortero de junta usar para rejuntar una piscina de agua salada?</button>
+        <button class="suggestion" onclick="useSuggestion(this)">¿El Tixar Flex Duo S2 sirve para suelo radiante con gran formato?</button>
+        <button class="suggestion" onclick="useSuggestion(this)">¿Cómo impermeabilizo el vaso de una piscina antes de alicatar?</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="input-wrap">
+      <textarea
+        id="input"
+        placeholder="Escribe tu consulta técnica..."
+        rows="1"
+        onkeydown="handleKey(event)"
+        oninput="autoResize(this)"
+      ></textarea>
+      <button class="send-btn" id="sendBtn" onclick="send()" disabled>
+        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+    <div class="input-meta">
+      <p class="input-hint">Enter para enviar · Shift+Enter para nueva línea</p>
+      <span class="char-counter" id="charCounter"></span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const API_URL = '/consulta';
+
+  const messagesEl = document.getElementById('messages');
+  const inputEl    = document.getElementById('input');
+  const sendBtn    = document.getElementById('sendBtn');
+  const welcomeEl  = document.getElementById('welcome');
+
+  let pendingQuery = null;
+
+  inputEl.addEventListener('input', () => {
+    sendBtn.disabled = inputEl.value.trim() === '';
+  });
+
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (!sendBtn.disabled) send();
+    }
+  }
+
+  function useSuggestion(btn) {
+    inputEl.value = btn.textContent.trim();
+    autoResize(inputEl);
+    sendBtn.disabled = false;
+    send();
+  }
+
+  function hideWelcome() {
+    if (welcomeEl) welcomeEl.style.display = 'none';
+  }
+
+  function scrollBottom() {
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function addMessage(text, role) {
+    hideWelcome();
+
+    const row = document.createElement('div');
+    row.className = `msg-row ${role}`;
+
+    const avatar = document.createElement('div');
+    avatar.className = `avatar ${role}`;
+
+    if (role === 'ai') {
+      avatar.textContent = 'LN';
+    } else {
+      avatar.textContent = 'Tú';
+    }
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+
+    if (role === 'ai') {
+      bubble.innerHTML = formatText(text);
+      const footer = document.createElement('div');
+      footer.className = 'bubble-footer';
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'copy-btn';
+      copyBtn.innerHTML = `<svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copiar`;
+      copyBtn.onclick = () => copyText(text, copyBtn);
+      footer.appendChild(copyBtn);
+      bubble.appendChild(footer);
+    } else {
+      bubble.textContent = text;
+    }
+
+    const timeEl = document.createElement('div');
+    timeEl.className = 'msg-time';
+    timeEl.textContent = getTime();
+
+    const wrapper = document.createElement('div');
+    wrapper.appendChild(row);
+    wrapper.appendChild(timeEl);
+
+    row.appendChild(avatar);
+    row.appendChild(bubble);
+    messagesEl.appendChild(wrapper);
+    scrollBottom();
+  }
+
+  function formatText(raw) {
+    let html = raw
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/^- (.+)$/gm, '<li>$1</li>')
+      .replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+
+    html = html.replace(/(<li>.*<\/li>\n?)+/gs, match => `<ul>${match}</ul>`);
+
+    html = html.split(/\n{2,}/).map(p => {
+      p = p.trim();
+      if (!p) return '';
+      if (p.startsWith('<ul>') || p.startsWith('<ol>')) return p;
+      return `<p>${p.replace(/\n/g, '<br>')}</p>`;
+    }).join('');
+
+    return html;
+  }
+
+  function showTyping() {
+    const row = document.createElement('div');
+    row.className = 'typing-row';
+    row.id = 'typing';
+
+    const avatar = document.createElement('div');
+    avatar.className = 'avatar ai';
+    avatar.textContent = 'LN';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'typing-bubble';
+    bubble.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+
+    row.appendChild(avatar);
+    row.appendChild(bubble);
+    messagesEl.appendChild(row);
+    scrollBottom();
+  }
+
+  function hideTyping() {
+    const t = document.getElementById('typing');
+    if (t) t.remove();
+  }
+
+  function copyText(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+      btn.classList.add('copied');
+      btn.innerHTML = `<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Copiado`;
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = `<svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copiar`;
+      }, 2000);
+    });
+  }
+
+  function setProduct(name) {
+    inputEl.value = name + ' ';
+    inputEl.focus();
+    autoResize(inputEl);
+    sendBtn.disabled = false;
+    updateCounter();
+  }
+
+  const charCounter = document.getElementById('charCounter');
+
+  function updateCounter() {
+    const len = inputEl.value.length;
+    if (len === 0) {
+      charCounter.classList.remove('visible', 'warning');
+      charCounter.textContent = '';
+    } else {
+      charCounter.textContent = len + ' / 2000';
+      charCounter.classList.add('visible');
+      if (len > 1800) {
+        charCounter.classList.add('warning');
+      } else {
+        charCounter.classList.remove('warning');
+      }
+    }
+  }
+
+  inputEl.addEventListener('input', updateCounter);
+
+  function getTime() {
+    const now = new Date();
+    return now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+  }
+
+  function resetChat() {
+    messagesEl.innerHTML = '';
+    pendingQuery = null;
+    const welcome = document.createElement('div');
+    welcome.className = 'welcome';
+    welcome.id = 'welcome';
+    welcome.innerHTML = `
+      <div class="welcome-badge">Asistente Técnico IA</div>
+      <h2>¿En qué puedo <span>ayudarte hoy?</span></h2>
+      <div class="welcome-divider"></div>
+      <p>Consulta dudas técnicas sobre aplicación y uso de productos Llana. Respondo con información precisa basada en documentación técnica.</p>
+      <div class="suggestions">
+        <button class="suggestion" onclick="useSuggestion(this)">¿Qué mortero de junta usar para rejuntar una piscina de agua salada?</button>
+        <button class="suggestion" onclick="useSuggestion(this)">¿El Tixar Flex Duo S2 sirve para suelo radiante con gran formato?</button>
+        <button class="suggestion" onclick="useSuggestion(this)">¿Cómo impermeabilizo el vaso de una piscina antes de alicatar?</button>
+      </div>`;
+    messagesEl.appendChild(welcome);
+    inputEl.value = '';
+    inputEl.style.height = 'auto';
+    sendBtn.disabled = true;
+    updateCounter();
+  }
+
+  const scrollBtn = document.getElementById('scrollBtn');
+  messagesEl.addEventListener('scroll', () => {
+    const distFromBottom = messagesEl.scrollHeight - messagesEl.scrollTop - messagesEl.clientHeight;
+    if (distFromBottom > 120) {
+      scrollBtn.classList.add('visible');
+    } else {
+      scrollBtn.classList.remove('visible');
+    }
+  });
+
+  async function send() {
+    const raw = inputEl.value.trim();
+    if (!raw) return;
+
+    let query = raw;
+    if (pendingQuery) {
+      query = `${pendingQuery} ${raw}`;
+      pendingQuery = null;
+    }
+
+    addMessage(raw, 'user');
+    inputEl.value = '';
+    inputEl.style.height = 'auto';
+    sendBtn.disabled = true;
+    showTyping();
+
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query }),
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const data = await res.json();
+      hideTyping();
+      addMessage(data.respuesta, 'ai');
+
+      if (data.requiere_clarificacion) {
+        pendingQuery = query;
+      }
+
+    } catch (err) {
+      hideTyping();
+      addMessage('No se pudo conectar con el asistente. Comprueba que el servidor esté activo.', 'ai');
+      console.error(err);
+    }
+  }
+</script>
+</body>
+</html>
