@@ -93,6 +93,7 @@ def root() -> FileResponse:
 
 
 @app.get("/health", tags=["Sistema"])
+@app.head("/health", include_in_schema=False)
 def health() -> dict:
     """Comprueba que el servidor está operativo."""
     return {"status": "ok"}
