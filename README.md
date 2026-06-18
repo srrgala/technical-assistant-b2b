@@ -87,7 +87,7 @@ Cuando la consulta es ambigua — "¿qué adhesivo uso?" sin especificar soporte
 | Retrieval | Keyword matching sobre archivos de KB |
 | Frontend | HTML / CSS / JS vanilla |
 | Servidor | Uvicorn |
-| Deploy | Koyeb |
+| Deploy | Render (Web Service) |
 | VCS | GitHub |
 
 ---
@@ -146,8 +146,6 @@ technical-assistant-b2b/
 
 ├── requirements.txt
 
-├── koyeb.yaml
-
 ├── .env.example
 
 └── .gitignore
@@ -176,14 +174,18 @@ Abre `http://localhost:8000`. Frontend y backend servidos por el mismo proceso.
 
 ---
 
-## Deploy en Koyeb
+## Deploy en Render
 
-1. Conecta el repo en [koyeb.com](https://koyeb.com) → New App → GitHub
-2. Koyeb detecta `koyeb.yaml` automáticamente
-3. Añade `ANTHROPIC_API_KEY` en el dashboard (Environment → Add variable)
+1. Conecta el repo en [render.com](https://render.com) → New Web Service
+2. Añade `ANTHROPIC_API_KEY` en el dashboard (Environment → Add variable)
+3. Configura:
+   - **Build command:** `pip install -r requirements.txt`
+   - **Start command:** `uvicorn api:app --host 0.0.0.0 --port $PORT`
 4. Deploy
 
-URL de producción: [URL obtenida tras el deploy]
+**Nota:** el plan gratuito de Render duerme el servicio tras inactividad. El primer request tras un período sin uso puede tardar \~50 segundos en responder.
+
+URL de producción: https://technical-assistant-b2b.onrender.com
 
 ---
 
