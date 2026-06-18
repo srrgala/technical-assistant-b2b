@@ -87,7 +87,7 @@ Cuando la consulta es ambigua — "¿qué adhesivo uso?" sin especificar soporte
 | Retrieval | Keyword matching sobre archivos de KB |
 | Frontend | HTML / CSS / JS vanilla |
 | Servidor | Uvicorn |
-| Deploy | Render (Web Service) |
+| Deploy | Koyeb |
 | VCS | GitHub |
 
 ---
@@ -146,7 +146,7 @@ technical-assistant-b2b/
 
 ├── requirements.txt
 
-├── render.yaml
+├── koyeb.yaml
 
 ├── .env.example
 
@@ -176,16 +176,14 @@ Abre `http://localhost:8000`. Frontend y backend servidos por el mismo proceso.
 
 ---
 
-## Deploy en Render
+## Deploy en Koyeb
 
-1. Conecta el repo en [render.com](https://render.com) → New Web Service  
-2. Render detecta `render.yaml` automáticamente  
-3. Añade `ANTHROPIC_API_KEY` en el dashboard (Environment → Add variable)  
+1. Conecta el repo en [koyeb.com](https://koyeb.com) → New App → GitHub
+2. Koyeb detecta `koyeb.yaml` automáticamente
+3. Añade `ANTHROPIC_API_KEY` en el dashboard (Environment → Add variable)
 4. Deploy
 
-El `render.yaml` configura el comando de arranque con `--host 0.0.0.0 --port $PORT`. No usar `--port 8000` en producción.
-
-**Nota:** el plan gratuito de Render duerme el servicio tras inactividad. El primer request tras un período sin uso puede tardar \~50 segundos en responder.
+URL de producción: [URL obtenida tras el deploy]
 
 ---
 
@@ -285,4 +283,3 @@ Cada ficha cubre: descripción, usos recomendados, usos contraindicados, especif
 - **Sin persistencia server-side.** El historial lo gestiona el cliente via concatenación de query. Conversaciones largas aumentan el tamaño del payload.  
 - **Una pregunta de clarificación por turno.** Más natural en conversación, pero puede alargar la resolución de consultas con múltiples variables desconocidas.  
 - **Dependencia de la API de Anthropic.** Sin conexión o con rate limits, el servicio no funciona. No hay fallback offline.
-
