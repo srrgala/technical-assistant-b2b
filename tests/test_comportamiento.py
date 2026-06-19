@@ -124,28 +124,31 @@ def test_clarifier_con_producto_faltante_entorno():
 
 def test_flujo_fuera_de_alcance():
     r = procesar_consulta("¿Cuánto cuesta el metro cuadrado en Madrid?")
-    assert r == fallback.fuera_de_alcance()
+    assert r["respuesta"] == fallback.fuera_de_alcance()
+    assert r["requiere_clarificacion"] is False
     print("✓ test_flujo_fuera_de_alcance")
 
 
 def test_flujo_off_topic_tiempo():
     r = procesar_consulta("¿Qué tiempo hace mañana?")
-    assert r == fallback.fuera_de_alcance()
+    assert r["respuesta"] == fallback.fuera_de_alcance()
+    assert r["requiere_clarificacion"] is False
     print("✓ test_flujo_off_topic_tiempo")
 
 
 def test_flujo_incompleta_devuelve_pregunta():
     r = procesar_consulta("¿qué producto me recomiendas?")
-    assert r != fallback.fuera_de_alcance()
-    assert r != fallback.sin_informacion()
-    assert "?" in r
+    assert r["respuesta"] != fallback.fuera_de_alcance()
+    assert r["respuesta"] != fallback.sin_informacion()
+    assert "?" in r["respuesta"]
+    assert r["requiere_clarificacion"] is True
     print("✓ test_flujo_incompleta_devuelve_pregunta")
 
 
 def test_flujo_anclajes_fuera_catalogo():
     r = procesar_consulta("¿Tenéis algo para anclajes químicos de varillas roscadas?")
-    # Debe ser fallback — no forzar coincidencia con ningún producto del catálogo
-    assert r == fallback.fuera_de_alcance()
+    assert r["respuesta"] == fallback.fuera_de_alcance()
+    assert r["requiere_clarificacion"] is False
     print("✓ test_flujo_anclajes_fuera_catalogo")
 
 

@@ -24,17 +24,17 @@ def _cargar_kb_completa(producto_id: str) -> str | None:
         return f.read()
 
 
-def procesar_consulta(query: str) -> str:
+def procesar_consulta(query: str) -> dict:
     """
     Punto de entrada principal del sistema.
     Recibe la query tal como llega (original o concatenada por el cliente).
-    Devuelve siempre un string: respuesta, pregunta de clarificación o fallback.
+    Devuelve siempre un dict con claves 'respuesta' y 'requiere_clarificacion'.
     """
 
     # 0. Saludos e identidad → respuesta directa sin pasar por classifier
     tipo_identidad = detectar_tipo(query)
     if tipo_identidad:
-        return responder_identidad(tipo_identidad)
+        return {"respuesta": responder_identidad(tipo_identidad), "requiere_clarificacion": False}
 
     # 1. Clasificar la consulta
     clasificacion = clasificar(query)
@@ -42,11 +42,11 @@ def procesar_consulta(query: str) -> str:
 
     # 2. Fuera de alcance → fallback inmediato
     if tipo == FUERA_DE_ALCANCE:
-        return fallback.fuera_de_alcance()
+        return {"respuesta": fallback.fuera_de_alcance(), "requiere_clarificacion": False}
 
     # 3. Incompleta → una sola pregunta de clarificación
     if tipo == INCOMPLETA:
-        return generar_pregunta(clasificacion)
+        return {"respuesta": generar_pregunta(clasificacion), "requiere_clarificacion": True}
 
     # 4. Comparación → cargar KB completa de ambos productos y comparar
     if tipo == COMPARACION:
@@ -58,7 +58,7 @@ def procesar_consulta(query: str) -> str:
                 nombre = PRODUCTOS_VALIDOS[pid]["nombre_completo"]
                 contextos.append(f"=== {nombre} ===\n{kb}")
         if not contextos:
-            return fallback.sin_informacion()
+            return {"respuesta": fallback.sin_informacion(), "requiere_clarificacion": False}
         contexto_combinado = "\n\n".join(contextos)
         return construir_respuesta(query, productos_ids[0], contexto_combinado)
 
@@ -87,9 +87,9 @@ if __name__ == "__main__":
             query = f"{query_pendiente} {query}"
             query_pendiente = None
 
-        respuesta = procesar_consulta(query)
+        resultado = procesar_consulta(query)
 
-        if respuesta.startswith("¿"):
+        if resultado["requiere_clarificacion"]:
             query_pendiente = query
 
-        print(f"\nAsistente: {respuesta}\n")
+        print(f"\nAsistente: {resultado['respuesta']}\n")

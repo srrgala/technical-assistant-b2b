@@ -118,20 +118,18 @@ def consulta(body: ConsultaRequest) -> ConsultaResponse:
     logger.info("Query recibida [len=%d]: %s", len(body.query), body.query[:120])
 
     try:
-        respuesta = procesar_consulta(body.query)
+        resultado = procesar_consulta(body.query)
     except Exception as e:
         logger.exception("Error inesperado en procesar_consulta: %s", e)
         raise HTTPException(status_code=500, detail="Error interno del asistente.")
 
-    requiere_clarificacion = respuesta.startswith("¿")
-
     logger.info(
         "Respuesta generada [clarificacion=%s, len=%d]",
-        requiere_clarificacion,
-        len(respuesta),
+        resultado["requiere_clarificacion"],
+        len(resultado["respuesta"]),
     )
 
     return ConsultaResponse(
-        respuesta=respuesta,
-        requiere_clarificacion=requiere_clarificacion,
+        respuesta=resultado["respuesta"],
+        requiere_clarificacion=resultado["requiere_clarificacion"],
     )
