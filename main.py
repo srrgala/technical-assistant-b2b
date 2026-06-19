@@ -40,8 +40,10 @@ def procesar_consulta(query: str) -> dict:
     clasificacion = clasificar(query)
     tipo = clasificacion["tipo"]
 
-    # 2. Fuera de alcance → fallback inmediato
+    # 2. Fuera de alcance → fallback según motivo
     if tipo == FUERA_DE_ALCANCE:
+        if clasificacion.get("motivo") == "recomendacion_catalogo":
+            return {"respuesta": fallback.fuera_de_alcance_recomendacion(), "requiere_clarificacion": False}
         return {"respuesta": fallback.fuera_de_alcance(), "requiere_clarificacion": False}
 
     # 3. Incompleta → una sola pregunta de clarificación

@@ -9,7 +9,7 @@ INCOMPLETA = "incompleta"
 COMPLETA = "completa"
 COMPARACION = "comparacion"
 
-KEYWORDS_FUERA_DE_ALCANCE = [
+KEYWORDS_COMERCIAL = {
     "precio", "coste", "costo", "cuánto cuesta", "cuanto cuesta",
     "cuánto vale", "cuanto vale", "presupuesto",
     "disponible", "disponibilidad", "stock", "hay stock",
@@ -18,9 +18,13 @@ KEYWORDS_FUERA_DE_ALCANCE = [
     "descuento", "oferta", "promoción", "promocion",
     "ficha comercial", "hoja comercial", "catálogo", "catalogo",
     "certificado", "homologación", "homologacion",
-    "más vendido", "mas vendido", "mejor producto", "más popular", "mas popular",
     "pinturas", "pintura", "aislante",
-]
+}
+
+KEYWORDS_RECOMENDACION_CATALOGO = {
+    "más vendido", "mas vendido", "mejor producto",
+    "más popular", "mas popular",
+}
 
 KEYWORDS_COMPARACION = [
     "diferencia", "diferencias", "comparar", "comparación", "comparacion",
@@ -36,9 +40,12 @@ def _normalizar(texto: str) -> str:
     return texto.lower().strip()
 
 
-def _es_intencion_fuera_de_alcance(query: str) -> bool:
-    query_norm = _normalizar(query)
-    return any(kw in query_norm for kw in KEYWORDS_FUERA_DE_ALCANCE)
+def _clasificar_fuera_de_alcance(query_norm: str) -> str | None:
+    if any(kw in query_norm for kw in KEYWORDS_COMERCIAL):
+        return "comercial"
+    if any(kw in query_norm for kw in KEYWORDS_RECOMENDACION_CATALOGO):
+        return "recomendacion_catalogo"
+    return None
 
 
 def _es_comparacion(query: str) -> bool:
@@ -80,9 +87,12 @@ def _variables_faltantes(query: str, producto_id: str) -> list[str]:
 
 
 def clasificar(query: str) -> dict:
-    if _es_intencion_fuera_de_alcance(query):
+    query_norm = _normalizar(query)
+    motivo_fuera = _clasificar_fuera_de_alcance(query_norm)
+    if motivo_fuera is not None:
         return {
             "tipo": FUERA_DE_ALCANCE,
+            "motivo": motivo_fuera,
             "producto_id": None,
             "productos_ids": [],
             "variables_faltantes": [],
@@ -106,6 +116,7 @@ def clasificar(query: str) -> dict:
     if not _pertenece_al_dominio(query) and producto_id is None:
         return {
             "tipo": FUERA_DE_ALCANCE,
+            "motivo": "comercial",
             "producto_id": None,
             "productos_ids": [],
             "variables_faltantes": [],

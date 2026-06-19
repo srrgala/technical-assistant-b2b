@@ -10,6 +10,12 @@ FALLBACK_FUERA_DE_ALCANCE = (
     "e impermeabilización de la gama Llana."
 )
 
+FALLBACK_FUERA_DE_ALCANCE_RECOMENDACION = (
+    "No hago recomendaciones de qué producto elegir dentro del catálogo "
+    "— resuelvo consultas técnicas sobre un producto concreto. "
+    "Indícame con qué producto estás trabajando y te ayudo con el detalle técnico."
+)
+
 FALLBACK_BAJA_CONFIANZA = (
     "Prefiero no darte una respuesta incorrecta."
 )
@@ -25,6 +31,10 @@ def sin_informacion() -> str:
 
 def fuera_de_alcance() -> str:
     return FALLBACK_FUERA_DE_ALCANCE
+
+
+def fuera_de_alcance_recomendacion() -> str:
+    return FALLBACK_FUERA_DE_ALCANCE_RECOMENDACION
 
 
 def baja_confianza() -> str:

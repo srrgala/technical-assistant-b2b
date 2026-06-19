@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import os
+import re
 from config import PRODUCTOS_VALIDOS, KB_DIR
 
 
@@ -41,7 +42,7 @@ def _extraer_keywords_query(query: str) -> list[str]:
         "lo", "le", "si", "no", "me", "mi", "su", "sus", "este", "esta",
         "qué", "cómo", "cuál", "cuándo", "dónde", "antes",
     }
-    tokens = query.lower().split()
+    tokens = re.findall(r"[a-záéíóúñü0-9]+", query.lower())
     return [t for t in tokens if t not in stopwords and len(t) > 2]
 
 

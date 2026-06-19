@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 # Constantes
 # ---------------------------------------------------------------------------
 MIN_FRAGMENTOS = 1
-MODEL = "claude-haiku-4-5"
+MODEL = "claude-sonnet-4-6"
 MAX_TOKENS = 1024
 
 # ---------------------------------------------------------------------------
