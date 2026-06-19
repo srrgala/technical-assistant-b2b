@@ -154,7 +154,7 @@ technical-assistant-b2b/
 
 ## Instalación local
 
-git clone https://github.com/srrgala/technical-assistant-b2b
+git clone https://github.com/srrgala/llana-rag
 
 cd technical-assistant-b2b
 
@@ -243,7 +243,8 @@ respuesta del usuario: "porcelánico de gran formato en fachada exterior"
 | Consulta técnica completa | Respuesta técnica estructurada |
 | Consulta ambigua | Pregunta de clarificación (`requiere_clarificacion: true`) |
 | Comparación entre dos productos | Respuesta comparativa con KB de ambos |
-| Fuera de dominio | Rechazo educado sin inventar |
+| Consulta comercial (precio, stock, distribuidor) | Rechazo indicando el alcance del asistente |
+| Consulta de recomendación de catálogo ("mejor producto") | Mensaje honesto que explica el límite y deja un siguiente paso útil |
 
 ---
 
