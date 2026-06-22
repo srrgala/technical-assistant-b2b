@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import json
 import logging
 from pathlib import Path
 
@@ -118,6 +119,13 @@ def _llamar_llm(query: str, nombre_producto: str, contexto: str) -> dict:
             tool_choice={"type": "tool", "name": "provide_response"},
             messages=[{"role": "user", "content": user_message}],
         )
+        logger.info(json.dumps({
+            "proyecto": "llana",
+            "input_tokens": response.usage.input_tokens,
+            "output_tokens": response.usage.output_tokens,
+            "cache_creation_input_tokens": getattr(response.usage, "cache_creation_input_tokens", 0),
+            "cache_read_input_tokens": getattr(response.usage, "cache_read_input_tokens", 0),
+        }))
         tool_block = next(b for b in response.content if b.type == "tool_use")
         return {
             "respuesta": tool_block.input["respuesta"],
