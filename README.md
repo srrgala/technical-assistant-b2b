@@ -2,8 +2,6 @@
 
 **Asistente técnico conversacional para distribuidores e instaladores de materiales de construcción.**
 
-Proyecto \#3 del portfolio técnico — perfil híbrido Marketing \+ IA aplicada a B2B.
-
 ---
 
 ## Problema de negocio
